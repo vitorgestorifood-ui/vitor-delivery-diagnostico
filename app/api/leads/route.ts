@@ -9,24 +9,18 @@ export async function POST(request: Request) {
     if (!payload.name || !payload.whatsapp || !payload.city || !payload.consent) {
       return NextResponse.json({ error: "Dados obrigatórios ausentes." }, { status: 400 });
     }
-
     const endpoint = process.env.GOOGLE_APPS_SCRIPT_URL;
     const token = process.env.GOOGLE_APPS_SCRIPT_TOKEN;
-
-    if (!endpoint || !token) {
-      return NextResponse.json({ ok: true, configured: false });
-    }
-
+    if (!endpoint || !token) return NextResponse.json({ ok: true, configured: false });
     const response = await fetch(endpoint, {
       method: "POST",
+      redirect: "manual",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...payload, token, pageVersion: "v1" }),
     });
-
-    if (!response.ok) {
+    if (!response.ok && response.status !== 302) {
       return NextResponse.json({ error: "Não foi possível registrar o lead." }, { status: 502 });
     }
-
     return NextResponse.json({ ok: true, configured: true });
   } catch {
     return NextResponse.json({ error: "Não foi possível processar o envio." }, { status: 500 });
