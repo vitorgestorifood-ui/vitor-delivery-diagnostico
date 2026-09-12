@@ -1,0 +1,8 @@
+node_modules/
+.next/
+out/
+.pnpm-store/
+.env
+.env.local
+.env.*.local
+site-archive.tar.gz
